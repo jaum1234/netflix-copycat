@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\service\JsonResponseOutput;
+use App\service\Validator\UserValidator;
 use Facade\FlareClient\Http\Response;
 
 class UserController extends Controller
@@ -41,7 +42,14 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        $validator = UserValidator::validate($request->all());
+
+
+        if ($validator->fails()) {
+            return $this->response->errorsValidation($validator->errors());
+        }
+        
         $user = User::create($request->all());
 
         return $this->response->set(
@@ -84,7 +92,12 @@ class UserController extends Controller
     {
         $user->update($request->all());
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            ['user' => ['new_name' => $user->name, 'new_email' => $user->email]],
+            "User has been updated.",
+            200  
+        )->output();
     }
 
     /**
@@ -97,6 +110,11 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            [],
+            "User has been deleted.",
+            200  
+        )->output();
     }
 }

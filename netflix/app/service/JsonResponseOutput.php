@@ -27,4 +27,13 @@ class JsonResponseOutput
             'message' => $this->message
         ], $this->statusCode);
     }
+
+    public function errorsValidation($errors)
+    {
+        return response()->json([
+            'success' => false,
+            'data' => ['errors' => $errors],
+            'message' => 'Oops... Looks like an error occured.'
+        ], 400);
+    }
 }
