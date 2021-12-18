@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\service\JsonResponseOutput;
+use Facade\FlareClient\Http\Response;
 
 class UserController extends Controller
 {
+    
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -35,9 +42,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        User::create($request->all());
+        $user = User::create($request->all());
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            ['user' => ['name' => $user->name, 'email' => $user->email]],
+            "User has been created.",
+            201  
+        )->output();
     }
 
     /**
