@@ -26,7 +26,8 @@ class UserValidator
             'required' => ':attribute field is required',
             'string' => ':attribute must be a valid string',
             'email' => 'the email is not a valid email',
-            'min' => ':attribute must have at least 3 characters',
+            'min.name' => ':attribute must have at least 3 characters',
+            'min.password' => ':attribute must have at least 8 characters',
             'max' => ':attribute must have a maximum of 100 characters'
         ];
     }

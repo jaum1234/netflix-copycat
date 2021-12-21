@@ -2,53 +2,82 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Create a new AuthController instance.
      *
-     * @return \Illuminate\View\View
+     * @return void
      */
-    public function create()
+    public function __construct()
     {
-        return view('auth.login');
+        // $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Get a JWT via given credentials.
      *
-     * @param  \App\Http\Requests\Auth\LoginRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(LoginRequest $request)
+    public function store()
     {
-        $request->authenticate();
+        $credentials = request(['email', 'password']);
 
-        $request->session()->regenerate();
+        if (! $token = Auth::attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return $this->respondWithToken($token);
     }
 
     /**
-     * Destroy an authenticated session.
+     * Get the authenticated User.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request)
+    public function me()
     {
-        Auth::guard('web')->logout();
+        return response()->json(Auth::user());
+    }
 
-        $request->session()->invalidate();
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        Auth::logout();
 
-        $request->session()->regenerateToken();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
 
-        return redirect('/');
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(Auth::refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::factory()->getTTL()
+        ]);
     }
 }

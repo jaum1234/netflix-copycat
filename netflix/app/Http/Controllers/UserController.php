@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\service\JsonResponseOutput;
 use App\service\Validator\UserValidator;
 use Facade\FlareClient\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -49,8 +50,11 @@ class UserController extends Controller
         if ($validator->fails()) {
             return $this->response->errorsValidation($validator->errors());
         }
-        
-        $user = User::create($request->all());
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
         return $this->response->set(
             true, 
