@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Video;
+use App\service\Validator\VideoValidator;
 use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -35,9 +40,20 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        Video::create($request->all());
+        $validator = VideoValidator::validate($request->all());
 
-        return response()->json(['success' => true]);
+        if ($validator->fails()) {
+            return $this->response->errorsValidation($validator->errors());
+        }
+
+        $video = Video::create($validator->validated());
+
+        return $this->response->set(
+            true, 
+            ['video' => $video],
+            "Video has been created.",
+            201  
+        )->output();
     }
 
     /**
@@ -71,9 +87,20 @@ class VideoController extends Controller
      */
     public function update(Request $request, Video $video)
     {
-        $video->update($request->all());
+        $validator = VideoValidator::validate($request->all());
 
-        return response()->json(['success' => true]);
+        if ($validator->fails()) {
+            return $this->response->errorsValidation($validator->errors());
+        }
+
+        $video->update($validator->validated());
+
+        return $this->response->set(
+            true, 
+            ['video' => $video],
+            "Video has been updated.",
+            200  
+        )->output();
     }
 
     /**
@@ -86,6 +113,11 @@ class VideoController extends Controller
     {
         $video->delete();
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            [],
+            "Video has been deleted.",
+            200  
+        )->output();
     }
 }

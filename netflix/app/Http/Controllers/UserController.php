@@ -90,6 +90,12 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $validator = UserValidator::validate($request->all());
+
+
+        if ($validator->fails()) {
+            return $this->response->errorsValidation($validator->errors());
+        }
         $user->update($request->all());
 
         return $this->response->set(

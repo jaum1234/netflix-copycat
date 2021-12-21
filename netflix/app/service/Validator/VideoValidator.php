@@ -4,7 +4,7 @@ namespace App\service\Validator;
 
 use Illuminate\Support\Facades\Validator;
 
-class UserValidator 
+class VideoValidator 
 {
     public static function validate($request)
     {
@@ -14,9 +14,8 @@ class UserValidator
     private static function rules()
     {
         return [
-            'name' => 'string|required|min:3|max:100',
-            'email' => 'string|email|required|max:100|unique:users,email',
-            'password' => 'string|sometimes|min:8|max:100',
+            'title' => 'string|required|min:3|max:100',
+            'description' => 'string|required|min:3|max:345',
         ];
     }
 
@@ -25,7 +24,6 @@ class UserValidator
         return [
             'required' => ':attribute field is required',
             'string' => ':attribute must be a valid string',
-            'email' => 'the email is not a valid email',
             'min' => ':attribute must have at least 3 characters',
             'max' => ':attribute must have a maximum of 100 characters'
         ];

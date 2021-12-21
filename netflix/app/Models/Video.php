@@ -9,4 +9,6 @@ use Jamesh\Uuid\HasUuid;
 class Video extends Model
 {
     use HasFactory, HasUuid;
+
+    protected $fillable = ['title', 'description'];
 }
