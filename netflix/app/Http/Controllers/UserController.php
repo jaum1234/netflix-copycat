@@ -45,7 +45,6 @@ class UserController extends Controller
     {   
         $validator = UserValidator::validate($request->all());
 
-
         if ($validator->fails()) {
             return $this->response->errorsValidation($validator->errors());
         }
