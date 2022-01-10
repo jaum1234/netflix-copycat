@@ -16,7 +16,7 @@ class UserValidator
         return [
             'name' => 'string|required|min:3|max:100',
             'email' => 'string|email|required|max:100|unique:users,email',
-            'password' => 'string|required|min:8|max:100',
+            'password' => 'string|sometimes|min:8|max:100',
         ];
     }
 }

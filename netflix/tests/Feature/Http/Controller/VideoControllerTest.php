@@ -2,16 +2,17 @@
 
 namespace Tests\Feature\Http\Controller;
 
+use App\Models\Video;
 use Tests\TestCase;
-use App\Models\User;
+
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class UserControllerTest extends TestCase
+class VideoControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $url = '/api/users';
+    protected $url = '/api/videos';
     /**
      * A basic feature test example.
      *
@@ -19,28 +20,24 @@ class UserControllerTest extends TestCase
      */
     public function test_should_create()
     {
+        $this->withoutExceptionHandling();
         //Arrange
         $newData = [
-            'name' => 'Coura Do vapo',
-            'email' => 'coura@putas.com',
-            'password' => '123'
+            'title' => 'Coura SEXO ON THE BEACH',
+            'description' => 'coura nas aventuras no himalaia 2???',
         ];
 
-        //Act
+        //Acts
         $response = $this->post($this->url, $newData);
-
-        unset($newData['password']);
 
         //Assert
         $response->assertStatus(201);
         $response->assertJsonStructure([
             'success',
-            'data' => [
-                'user' => ['name', 'email']
-            ],
+            'data' => [ 'video' ],
             'message'
         ]);
-        $this->assertDatabaseHas('users', $newData);
+        $this->assertDatabaseHas('videos', $newData);
 
     }
 
@@ -49,7 +46,7 @@ class UserControllerTest extends TestCase
      */
     public function test_should_fail_if_data_is_incorrect($data)
     {
-        
+        //
     }
 
     private function dataForValidation()
@@ -64,19 +61,17 @@ class UserControllerTest extends TestCase
     public function test_should_update()
     {
         //Arrange
-        $this->withoutExceptionHandling();
-
-        $user = User::factory()->create();
-        $id = $user->id;
+        $video = Video::factory()->create();
+        $id = $video->id;
 
         $currentData = [
-            'name' => $user->name,
-            'email' => $user->email
+            'title' => $video->title,
+            'description' => $video->description
         ];
 
         $newData = [
-            'name' => 'new name',
-            'email' => 'CourinhadoQuero@hotlook.webnotes.com.tv'
+            'title' => 'new title',
+            'description' => 'new description'
         ];
 
         //Act
@@ -86,24 +81,22 @@ class UserControllerTest extends TestCase
         $response->assertOk();
         $response->assertJsonStructure([
             'success',
-            'data' => [
-                'user' => ['new_name', 'new_email']
-            ],
+            'data' => [ 'video' ],
             'message'
         ]);
-        $this->assertDatabaseHas('users', $newData);
-        $this->assertDatabaseMissing('users', $currentData);
+        $this->assertDatabaseHas('videos', $newData);
+        $this->assertDatabaseMissing('videos', $currentData);
     }
 
     public function test_should_delete()
     {
         //Arrange
-        $user = User::factory()->create();
-        $id = $user->id;
+        $video = Video::factory()->create();
+        $id = $video->id;
 
         $currentData = [
-            'name' => $user->name,
-            'email' => $user->email
+            'title' => $video->title,
+            'description' => $video->description
         ];
 
         //Act
@@ -116,7 +109,7 @@ class UserControllerTest extends TestCase
             'data' => [],
             'message'
         ]);
-        $this->assertDatabaseMissing('users', $currentData);
+        $this->assertDatabaseMissing('videos', $currentData);
 
     }
 }
