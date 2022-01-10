@@ -2,21 +2,18 @@
 
 namespace App\service\Validator;
 
+use App\service\Validator\BaseValidator;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
-class UserValidator 
+class UserValidator extends BaseValidator
 {
-    public static function validate($request)
-    {
-        return Validator::make($request, self::rules());
-    }
-
-    private static function rules()
+    protected function rules(): array
     {
         return [
-            'name' => 'string|required|min:3|max:100',
+            'name' => 'sometimes|string|required|min:3|max:100',
             'email' => 'string|email|required|max:100|unique:users,email',
-            'password' => 'string|sometimes|min:8|max:100',
+            'password' => 'confirmed|string|sometimes|min:8|max:100',
         ];
     }
 }

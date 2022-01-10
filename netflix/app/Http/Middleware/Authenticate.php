@@ -19,7 +19,7 @@ class Authenticate
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check()) {
-            return (new JsonResponseOutput())->set(false, [], "Unauthorized", 401);
+            return (new JsonResponseOutput())->set(false, [], "Unauthorized", 401)->output();
         }
 
         return $next($request);

@@ -8,13 +8,17 @@ use App\service\JsonResponseOutput;
 use App\service\Validator\UserValidator;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+    private UserValidator $validator;
     
-    public function __construct()
+    public function __construct(UserValidator $userValidator)
     {
         parent::__construct();
+        $this->validator = $userValidator;
+        
     }
     /**
      * Display a listing of the resource.
@@ -44,11 +48,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {   
-        $validator = UserValidator::validate($request->all());
-
-        if ($validator->fails()) {
-            return $this->response->errorsValidation($validator->errors());
+ 
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
         }
+
+        //if ($validator->fails()) {
+        //    return $this->response->errorsValidation($validator->errors());
+        //}
+//
+        //$validated = $validator->validated();
+        return 'mama minha rola';
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -93,12 +105,12 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $validator = UserValidator::validate($request->all());
+        $validator = $this->validator->validate($request);
 
 
-        if ($validator->fails()) {
-            return $this->response->errorsValidation($validator->errors());
-        }
+        //if ($validator->fails()) {
+        //    return $this->response->errorsValidation($validator->errors());
+        //}
         $user->update($request->all());
 
         return $this->response->set(

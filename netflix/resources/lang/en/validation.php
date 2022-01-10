@@ -145,7 +145,8 @@ return [
         'password' => [
             'max' => ':attribute must have at least :max characters',
             'min' => ':attribute must have at least :min characters'
-        ]
+        ],
+        
     ],
 
     /*

@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\service\Validator\LoginValidator;
+use Illuminate\Support\Facades\Auth;
+use App\service\Validator\UserValidator;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private LoginValidator $validator;
+
+    public function __construct(LoginValidator $loginValidator)
     {
-        // $this->middleware('auth:api', ['except' => ['login']]);
+        parent::__construct();
+        $this->validator = $loginValidator;
     }
 
     /**
@@ -22,9 +24,13 @@ class AuthenticatedSessionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
-    {
-        $credentials = request(['email', 'password']);
+    public function store(Request $request)
+    {       
+        try {
+            $credentials = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
+        }
 
         if (! $token = Auth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
