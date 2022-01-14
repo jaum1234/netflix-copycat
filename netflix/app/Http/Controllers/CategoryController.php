@@ -100,7 +100,7 @@ class CategoryController extends Controller
 
         return $this->response->set(
             true, 
-            ['category' => $category],
+            ['category' => ["new_name" => $category->name]],
             "Category has been updated.",
             200 
         )->output();
