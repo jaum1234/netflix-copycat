@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Video;
 use App\service\Validator\VideoValidator;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class VideoController extends Controller
 {
-    public function __construct()
+    private VideoValidator $validator;
+
+    public function __construct(VideoValidator $videoValidator)
     {
         parent::__construct();
+        $this->validator = $videoValidator;
     }
     /**
      * Display a listing of the resource.
@@ -40,13 +44,13 @@ class VideoController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = VideoValidator::validate($request->all());
-
-        if ($validator->fails()) {
-            return $this->response->errorsValidation($validator->errors());
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
         }
 
-        $video = Video::create($validator->validated());
+        $video = Video::create($data);
 
         return $this->response->set(
             true, 
@@ -87,13 +91,13 @@ class VideoController extends Controller
      */
     public function update(Request $request, Video $video)
     {
-        $validator = VideoValidator::validate($request->all());
-
-        if ($validator->fails()) {
-            return $this->response->errorsValidation($validator->errors());
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
         }
 
-        $video->update($validator->validated());
+        $video->update($data);
 
         return $this->response->set(
             true, 

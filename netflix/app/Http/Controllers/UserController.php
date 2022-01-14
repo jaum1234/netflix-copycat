@@ -60,7 +60,7 @@ class UserController extends Controller
         //}
 //
         //$validated = $validator->validated();
-        return 'mama minha rola';
+        
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -105,13 +105,17 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $validator = $this->validator->validate($request);
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
+        }
 
 
         //if ($validator->fails()) {
         //    return $this->response->errorsValidation($validator->errors());
         //}
-        $user->update($request->all());
+        $user->update($data);
 
         return $this->response->set(
             true, 

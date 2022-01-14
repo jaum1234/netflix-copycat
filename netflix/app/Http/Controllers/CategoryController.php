@@ -3,10 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\service\Validator\CategoryValidator;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
+    private CategoryValidator $validator;
+
+    public function __construct(CategoryValidator $categoryValidator)
+    {
+        parent::__construct();
+        $this->validator = $categoryValidator;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -35,9 +44,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        Category::create($request->all());
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
+        }
+        $category = Category::create($data);
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            ['category' => $category],
+            "Category has been created.",
+            201  
+        )->output();
     }
 
     /**
@@ -71,9 +90,20 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $category->update($request->all());
+        try {
+            $data = $this->validator->validate($request);
+        } catch (ValidationException $e) {
+            return $this->response->errorsValidation($e->errors());
+        }
 
-        return response()->json(['success' => true]);
+        $category->update($data);
+
+        return $this->response->set(
+            true, 
+            ['category' => $category],
+            "Category has been updated.",
+            200 
+        )->output();
     }
 
     /**
@@ -86,6 +116,11 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return response()->json(['success' => true]);
+        return $this->response->set(
+            true, 
+            [],
+            "Category has been deleted.",
+            200  
+        )->output();
     }
 }
