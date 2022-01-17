@@ -1,0 +1,28 @@
+.nav {
+    background: linear-gradient(rgb(20, 20, 20), rgb(24, 24, 24));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.nav > div {
+    align-items: center;
+    display: flex;
+    padding: 1.2rem 4%;
+}
+
+.nav__img {
+    width: 7em;
+    height: auto; 
+    margin-right: 1.5rem;   
+}
+
+.nav__list {
+    display: flex;
+}
+
+.nav__item {
+    margin-right: 0.9rem;
+}
+
