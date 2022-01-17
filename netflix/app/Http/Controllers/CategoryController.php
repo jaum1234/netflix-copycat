@@ -23,7 +23,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return $this->response->set(
+            true, 
+            ['categories' => Category::all()], 
+            'All categories listed', 
+            200
+        )->output();
     }
 
     /**

@@ -23,7 +23,12 @@ class VideoController extends Controller
      */
     public function index()
     {
-        //
+        return $this->response->set(
+            true, 
+            ['videos' => Video::all()], 
+            'All videos listed', 
+            200
+        )->output();
     }
 
     /**
