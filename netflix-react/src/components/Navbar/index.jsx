@@ -1,7 +1,10 @@
+import SearchBar from '../SearchBar';
 import './styles.css';
-import { FaSearch } from 'react-icons/fa'
 
 export default function Navbar() {
+
+    const pedro = () => console.log('ola');
+
     return (
         <nav className='nav container--fluid'>
             <div>
@@ -16,8 +19,9 @@ export default function Navbar() {
                 </ul>
             </div>
             <div>
-                <i><FaSearch size={20}/></i>
-                <i></i>
+                <div>
+                    <SearchBar onChange={ pedro } />
+                </div>
                 <div>
                     <img src='' alt=''></img>
                     <i></i>
